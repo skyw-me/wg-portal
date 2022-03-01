@@ -34,15 +34,9 @@ RUN go clean -modcache; go mod tidy; make build-docker
 ######-
 # Here starts the main image
 ######-
-FROM scratch
+FROM alpine:latest
 
-# Setup timezone
-ENV TZ=Europe/Vienna
-
-# Import linux stuff from builder.
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
+RUN apk add --no-cache --upgrade wireguard-tools iptables ip6tables
 
 # Import healthcheck binary
 COPY --from=builder /build/hc /app/hc
@@ -54,6 +48,7 @@ COPY --from=builder /build/dist/wgportal /app/wgportal
 WORKDIR /app
 
 # Command to run the executable
-CMD [ "/app/wgportal" ]
+COPY ./runtime /
+ENTRYPOINT [ "/start.sh" ]
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD [ "/app/hc", "http://localhost:11223/health" ]
+# HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD [ "/app/hc", "http://localhost:11223/health" ]
