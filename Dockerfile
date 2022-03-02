@@ -29,7 +29,7 @@ RUN curl -L https://git.prolicht.digital/pub/healthcheck/-/releases/v1.0.1/downl
     echo "Building version: $ENV_BUILD_IDENTIFIER-$ENV_BUILD_VERSION"
 
 # Build the Go app
-RUN go clean -modcache; go mod tidy; make build-docker
+RUN GOPROXY=https://goproxy.io,direct go clean -modcache; go mod tidy; make build-docker
 
 ######-
 # Here starts the main image
