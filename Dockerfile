@@ -24,12 +24,12 @@ WORKDIR /build
 RUN rm -rf ~/go; rm -rf go.sum
 
 # Download dependencies
-# RUN curl -L https://git.prolicht.digital/pub/healthcheck/-/releases/v1.0.1/downloads/binaries/hc -o /build/hc; \
-#     chmod +rx /build/hc; \
-#     echo "Building version: $ENV_BUILD_IDENTIFIER-$ENV_BUILD_VERSION"
+RUN curl -L https://git.prolicht.digital/pub/healthcheck/-/releases/v1.0.1/downloads/binaries/hc -o /build/hc; \
+    chmod +rx /build/hc; \
+    echo "Building version: $ENV_BUILD_IDENTIFIER-$ENV_BUILD_VERSION"
 
 # Build the Go app
-RUN go clean -modcache; go mod tidy; GOPROXY=https://goproxy.io,direct make build-docker
+RUN go clean -modcache; go mod tidy; make build-docker
 
 ######-
 # Here starts the main image
