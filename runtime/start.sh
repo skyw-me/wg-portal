@@ -1,6 +1,7 @@
 #!/bin/sh
 
-WG_CONFIG_PATH=/app/data/wireguard
+# set wg config path as env variable
+export WG_CONFIG_PATH=/app/data/wireguard
 
 # copy initial config if not exists
 mkdir -p "$WG_CONFIG_PATH"
