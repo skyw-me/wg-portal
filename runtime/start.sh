@@ -13,8 +13,4 @@ wg-quick down "$WG_DEVICE_CONFIG_FILE"
 wg-quick up "$WG_DEVICE_CONFIG_FILE"
 
 # main program
-if [ -n "${WAIT_FOR}" ]; then
-    /wait-for.sh "${WAIT_FOR}" -- /app/wgportal
-else
-    /app/wgportal
-fi
+/app/wgportal

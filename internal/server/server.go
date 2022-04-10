@@ -172,12 +172,17 @@ func (s *Server) Setup(ctx context.Context) error {
 	s.auth.RegisterProvider(pwProvider)
 
 	if s.config.Core.LdapEnabled {
-		ldapProvider, err := ldapprovider.New(&s.config.LDAP)
-		if err != nil {
-			s.config.Core.LdapEnabled = false
-			logrus.Warnf("failed to setup LDAP connection, LDAP features disabled")
+		for {
+			ldapProvider, err := ldapprovider.New(&s.config.LDAP)
+			s.auth.RegisterProviderWithoutError(ldapProvider, err)
+
+			if err == nil {
+				break
+			}
+
+			logrus.Warnf("failed to setup LDAP connection, retrying...")
+			time.Sleep(3 * time.Second)
 		}
-		s.auth.RegisterProviderWithoutError(ldapProvider, err)
 	}
 
 	// Setup WireGuard stuff
