@@ -66,6 +66,7 @@ type Config struct {
 		AdminPassword           string `yaml:"adminPass" envconfig:"ADMIN_PASS"`
 		EditableKeys            bool   `yaml:"editableKeys" envconfig:"EDITABLE_KEYS"`
 		CreateDefaultPeer       bool   `yaml:"createDefaultPeer" envconfig:"CREATE_DEFAULT_PEER"`
+		DefaultPeerNames        string `yaml:"defaultPeerNames" envconfig:"DEFAULT_PEER_NAMES"`
 		SelfProvisioningAllowed bool   `yaml:"selfProvisioning" envconfig:"SELF_PROVISIONING"`
 		WGExoprterFriendlyNames bool   `yaml:"wgExporterFriendlyNames" envconfig:"WG_EXPORTER_FRIENDLY_NAMES"`
 		LdapEnabled             bool   `yaml:"ldapEnabled" envconfig:"LDAP_ENABLED"`
@@ -90,6 +91,8 @@ func NewConfig() *Config {
 	cfg.Core.MailFrom = "WireGuard VPN <noreply@company.com>"
 	cfg.Core.AdminUser = "admin@wgportal.local"
 	cfg.Core.AdminPassword = "wgportal"
+	cfg.Core.CreateDefaultPeer = true
+	cfg.Core.DefaultPeerNames = "Default"
 	cfg.Core.LdapEnabled = false
 	cfg.Core.EditableKeys = true
 	cfg.Core.WGExoprterFriendlyNames = false

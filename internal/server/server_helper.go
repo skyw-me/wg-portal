@@ -3,6 +3,7 @@ package server
 import (
 	"crypto/md5"
 	"fmt"
+	"strings"
 	"io/ioutil"
 	"path"
 	"syscall"
@@ -332,20 +333,23 @@ func (s *Server) CreateUserDefaultPeer(email, device string) error {
 	}
 
 	// Create default vpn peer
-	peer, err := s.PrepareNewPeer(device)
-	if err != nil {
-		return errors.WithMessage(err, "failed to prepare new peer")
-	}
-	peer.Email = email
-	if existingUser.Firstname != "" && existingUser.Lastname != "" {
-		peer.Identifier = fmt.Sprintf("%s %s (%s)", existingUser.Firstname, existingUser.Lastname, "Default")
-	} else {
-		peer.Identifier = fmt.Sprintf("%s (%s)", existingUser.Email, "Default")
-	}
-	peer.CreatedBy = existingUser.Email
-	peer.UpdatedBy = existingUser.Email
-	if err := s.CreatePeer(device, peer); err != nil {
-		return errors.WithMessagef(err, "failed to automatically create vpn peer for %s", email)
+	defaultPeerNames := strings.Split(s.config.Core.DefaultPeerNames, ",")
+	for _, peerName := range defaultPeerNames {
+		peer, err := s.PrepareNewPeer(device)
+		if err != nil {
+			return errors.WithMessage(err, "failed to prepare new peer")
+		}
+		peer.Email = email
+		if existingUser.Firstname != "" && existingUser.Lastname != "" {
+			peer.Identifier = fmt.Sprintf("%s %s (%s)", existingUser.Firstname, existingUser.Lastname, peerName)
+		} else {
+			peer.Identifier = fmt.Sprintf("%s (%s)", existingUser.Email, peerName)
+		}
+		peer.CreatedBy = existingUser.Email
+		peer.UpdatedBy = existingUser.Email
+		if err := s.CreatePeer(device, peer); err != nil {
+			return errors.WithMessagef(err, "failed to automatically create vpn peer for %s", email)
+		}
 	}
 
 	return nil
